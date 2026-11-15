@@ -1,9 +1,9 @@
 # Render Blueprint: PostgreSQL + API + web app.
 # Render > New > Blueprint > pick your repository. Render asks for the values marked "sync: false".
 #
-# Plans are left out on purpose, so Render uses its default paid, always-on plans. A security monitor must
-# be awake to receive logs and push live updates. For a short trial you can add `plan: free` to each entry,
-# but free web services go to sleep when idle and free databases expire.
+# Free resources are pinned for a college/demo deployment. Free web services sleep after inactivity,
+# and the free Postgres database expires after 30 days. Upgrade the plans for continuous availability
+# and long-term data retention.
 #
 # Full steps are in README.md ("Deploy on Render").
 
