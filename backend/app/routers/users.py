@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
@@ -79,7 +79,7 @@ def update_user(
     return user
 
 
-@router.delete("/{user_id}", status_code=204)
+@router.delete("/{user_id}", status_code=204, response_class=Response, response_model=None)
 def delete_user(user_id: int, request: Request, admin: User = Depends(admin_only), db: Session = Depends(get_db)) -> None:
     user = db.get(User, user_id)
     if not user:
