@@ -21,7 +21,7 @@ const mono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: { default: "SentinelX", template: "%s | SentinelX" },
-  description: "Real-time security monitoring and threat detection.",
+  description: "SentinelX — real-time security monitoring and threat detection. Developed by Kumar Subodh.",
   robots: { index: false, follow: false },
 };
 
