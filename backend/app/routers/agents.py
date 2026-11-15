@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -74,7 +74,7 @@ def ingest(
     )
 
 
-@router.post("/api/agents/heartbeat", status_code=204)
+@router.post("/api/agents/heartbeat", status_code=204, response_class=Response, response_model=None)
 def heartbeat(
     body: HeartbeatRequest, request: Request, agent: Agent = Depends(get_agent), db: Session = Depends(get_db)
 ) -> None:
@@ -134,7 +134,7 @@ def update_agent(
     return _out(agent)
 
 
-@router.delete("/api/agents/{agent_id}", status_code=204)
+@router.delete("/api/agents/{agent_id}", status_code=204, response_class=Response, response_model=None)
 def delete_agent(agent_id: int, request: Request, admin: User = Depends(admin_only), db: Session = Depends(get_db)) -> None:
     agent = db.get(Agent, agent_id)
     if not agent:
