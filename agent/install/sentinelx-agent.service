@@ -1,0 +1,27 @@
+[Unit]
+Description=SentinelX log collection agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/sentinelx-agent
+EnvironmentFile=-/etc/sentinelx-agent/agent.env
+ExecStart=/opt/sentinelx-agent/venv/bin/python -m sentinelx_agent --config /etc/sentinelx-agent/agent.env
+Restart=always
+RestartSec=5
+
+# Reading /var/log/auth.log needs the "adm" group; the journal needs "systemd-journal".
+User=sentinelx-agent
+Group=sentinelx-agent
+SupplementaryGroups=adm systemd-journal
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/sentinelx-agent
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,56 @@
+# Quick start with Docker: PostgreSQL + API + web app, all on your own computer.
+#
+#   cp .env.example .env
+#   docker compose up --build
+#
+# Then open http://localhost:3000 and sign in with FIRST_ADMIN_USERNAME / FIRST_ADMIN_PASSWORD from .env.
+# For a public server with HTTPS use docker-compose.prod.yml instead.
+
+name: sentinelx
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sentinelx
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-this-database-password}
+      POSTGRES_DB: sentinelx
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinelx -d sentinelx"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://sentinelx:${POSTGRES_PASSWORD:-change-this-database-password}@db:5432/sentinelx
+    ports:
+      - "8000:8000"
+    volumes:
+      - models:/data/models
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    environment:
+      # The browser (not the container) calls the API, so this is the address your browser can reach.
+      API_PUBLIC_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  models:

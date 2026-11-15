@@ -1,0 +1,56 @@
+# Render Blueprint: PostgreSQL + API + web app.
+# Render > New > Blueprint > pick your repository. Render asks for the values marked "sync: false".
+#
+# Plans are left out on purpose, so Render uses its default paid, always-on plans. A security monitor must
+# be awake to receive logs and push live updates. For a short trial you can add `plan: free` to each entry,
+# but free web services go to sleep when idle and free databases expire.
+#
+# Full steps are in README.md ("Deploy on Render").
+
+databases:
+  - name: sentinelx-db
+    databaseName: sentinelx
+    user: sentinelx
+
+services:
+  # ------------------------------------------------------------------ API
+  - type: web
+    name: sentinelx-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sentinelx-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FIRST_ADMIN_USERNAME
+        value: admin
+      - key: FIRST_ADMIN_EMAIL
+        sync: false # your email address
+      - key: FIRST_ADMIN_PASSWORD
+        sync: false # 12+ characters, you will use it to sign in
+      - key: CORS_ORIGINS
+        sync: false # the web app's address, e.g. https://sentinelx-web.onrender.com
+      - key: TRUST_PROXY_HEADERS
+        value: "true"
+      - key: ENABLE_DOCS
+        value: "false"
+      - key: ENABLE_SIMULATOR
+        value: "true"
+
+  # ------------------------------------------------------------------ Web app
+  - type: web
+    name: sentinelx-web
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /login
+    envVars:
+      - key: API_PUBLIC_URL
+        sync: false # the API's address, e.g. https://sentinelx-api.onrender.com (no trailing slash)

@@ -1,0 +1,75 @@
+# Production stack for one server (a VPS): Caddy (automatic HTTPS) + web app + API + PostgreSQL.
+# Only Caddy is reachable from the internet. The API, the web app and the database stay on a private network.
+#
+#   1. Point your domain's DNS record at the server and open ports 80 and 443.
+#   2. cp .env.example .env   and set DOMAIN, SECRET_KEY, FIRST_ADMIN_PASSWORD, POSTGRES_PASSWORD.
+#   3. docker compose -f docker-compose.prod.yml up -d --build
+#
+# The browser talks to https://DOMAIN for everything: "/" is the web app, "/api" and "/ws" go to the API.
+
+name: sentinelx
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sentinelx
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: sentinelx
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinelx -d sentinelx"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql://sentinelx:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/sentinelx
+      TRUST_PROXY_HEADERS: "true"
+      ENABLE_DOCS: "false"
+      CORS_ORIGINS: https://${DOMAIN:?Set DOMAIN in .env}
+    volumes:
+      - models:/data/models
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    environment:
+      # Empty means "same address as the page", which Caddy routes to the API.
+      API_PUBLIC_URL: ""
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  pgdata:
+  models:
+  caddy_data:
+  caddy_config:

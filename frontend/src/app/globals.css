@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces (chart palette was validated against --panel) */
+  --page: 11 16 23;
+  --panel: 19 27 36;
+  --raised: 26 36 48;
+  --line: 38 50 63;
+
+  /* Ink */
+  --ink: 232 237 242;
+  --ink-2: 170 182 194;
+  --ink-3: 125 139 153;
+  --focus: 134 182 239;
+
+  /* Severity: the fixed status steps (critical / serious / warning) + blue + neutral */
+  --sev-critical: 208 59 59;
+  --sev-high: 236 131 90;
+  --sev-medium: 250 178 25;
+  --sev-low: 57 135 229;
+  --sev-info: 137 135 129;
+  --good: 12 163 12;
+  --sim: 144 133 233;
+
+  /* Categorical series, validated for dark (all-pairs): blue, orange, aqua */
+  --series-1: 57 135 229;
+  --series-2: 217 89 38;
+  --series-3: 25 158 112;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    @apply bg-page font-sans text-sm text-ink antialiased;
+  }
+  ::selection {
+    background: rgb(var(--focus) / 0.35);
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--focus));
+    outline-offset: 2px;
+  }
+  /* quiet, thin scrollbars for dense tables */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--line)) transparent;
+  }
+}
+
+@layer components {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .th {
+    @apply whitespace-nowrap px-3 py-2 text-left text-xs font-medium text-ink-3;
+  }
+  .td {
+    @apply px-3 py-2 align-middle;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,55 @@
+{
+  // Press F5 and pick a configuration. Breakpoints work in Python and in the Next.js server code.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: FastAPI (debug)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "justMyCode": true
+    },
+    {
+      "name": "Frontend: Next.js (dev)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Agent: check connection",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sentinelx_agent",
+      "args": ["--check", "--verbose"],
+      "cwd": "${workspaceFolder}/agent",
+      "envFile": "${workspaceFolder}/agent/agent.env"
+    },
+    {
+      "name": "Agent: run",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "sentinelx_agent",
+      "args": ["--verbose"],
+      "cwd": "${workspaceFolder}/agent",
+      "envFile": "${workspaceFolder}/agent/agent.env"
+    },
+    {
+      "name": "Tests: backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "cwd": "${workspaceFolder}/backend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack (backend + frontend)",
+      "configurations": ["Backend: FastAPI (debug)", "Frontend: Next.js (dev)"],
+      "stopAll": true
+    }
+  ]
+}
