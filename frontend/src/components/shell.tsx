@@ -87,6 +87,10 @@ function SidebarContent({ onNavigate, posture, active }: { onNavigate?: () => vo
           );
         })}
       </nav>
+      <div className="border-t border-line px-4 py-3">
+        <p className="text-xs font-medium text-ink-2">SentinelX</p>
+        <p className="mt-0.5 text-[11px] text-ink-3">Developed by Kumar Subodh</p>
+      </div>
     </div>
   );
 }
