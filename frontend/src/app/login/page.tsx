@@ -85,6 +85,7 @@ export default function LoginPage() {
           First time? The admin account is created from <span className="font-mono">FIRST_ADMIN_USERNAME</span> and{" "}
           <span className="font-mono">FIRST_ADMIN_PASSWORD</span> in your <span className="font-mono">.env</span> file.
         </p>
+        <p className="mt-6 text-center text-xs text-ink-3">Developed by <span className="font-medium text-ink-2">Kumar Subodh</span></p>
       </div>
     </main>
   );
