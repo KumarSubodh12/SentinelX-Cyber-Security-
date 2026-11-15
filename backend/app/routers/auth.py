@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -71,7 +71,7 @@ def me(user: User = Depends(any_user)) -> User:
     return user
 
 
-@router.post("/change-password", status_code=204)
+@router.post("/change-password", status_code=204, response_class=Response, response_model=None)
 def change_password(
     body: PasswordChange, request: Request, user: User = Depends(any_user), db: Session = Depends(get_db)
 ) -> None:
