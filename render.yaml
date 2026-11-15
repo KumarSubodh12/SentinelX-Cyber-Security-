@@ -9,6 +9,7 @@
 
 databases:
   - name: sentinelx-db
+    plan: free # College/demo deployment; free Postgres expires after 30 days
     databaseName: sentinelx
     user: sentinelx
 
@@ -16,6 +17,7 @@ services:
   # ------------------------------------------------------------------ API
   - type: web
     name: sentinelx-api
+    plan: free # Spins down after inactivity; suitable for demos
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
@@ -47,6 +49,7 @@ services:
   # ------------------------------------------------------------------ Web app
   - type: web
     name: sentinelx-web
+    plan: free # Spins down after inactivity; suitable for demos
     runtime: docker
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
